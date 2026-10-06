@@ -31,9 +31,9 @@ class LoadResult:
 
 
 class EntsoeLoader:
-    """Fetch ENTSO-E data for an area; defaults to the DE-LU bidding zone."""
+    """Fetch ENTSO-E data for an area; defaults to Sweden's SE3 bidding zone."""
 
-    def __init__(self, api_token: str | None = None, area: str = "DE_LU") -> None:
+    def __init__(self, api_token: str | None = None, area: str = "SE_3") -> None:
         load_dotenv()
         token = api_token or os.getenv("ENTSOE_API_TOKEN")
         if not token:
@@ -41,13 +41,15 @@ class EntsoeLoader:
                 "ENTSOE_API_TOKEN is required. Copy .env.example to .env and add your token."
             )
         self.client = EntsoePandasClient(api_key=token)
-        self.area = area
-        self.timezone = ZoneInfo("Europe/Berlin" if area == "DE_LU" else "Europe/Brussels")
+        self.area = area.upper().replace("SE1", "SE_1").replace("SE2", "SE_2").replace("SE3", "SE_3").replace("SE4", "SE_4")
+        if self.area not in {"SE_1", "SE_2", "SE_3", "SE_4"}:
+            raise ValueError("area must be a Swedish bidding area: SE1, SE2, SE3, or SE4")
+        self.timezone = ZoneInfo("Europe/Stockholm")
 
     def load(self, dataset: str, start: date, end: date) -> LoadResult:
         """Load one supported dataset for [start, end) in the area's local timezone.
 
-        Supported names: load, generation, wind_forecast, solar_forecast.
+        Supported names: day_ahead_price, load, generation, wind_forecast, solar_forecast.
         ``end`` is exclusive and is converted using local midnight, retaining correct
         daylight-saving behavior for the bidding zone.
         """
@@ -67,6 +69,7 @@ class EntsoeLoader:
 
     def _query_for(self, dataset: str):
         queries = {
+            "day_ahead_price": self.client.query_day_ahead_prices,
             "load": self.client.query_load,
             "generation": self.client.query_generation,
             "wind_forecast": self.client.query_wind_and_solar_forecast,

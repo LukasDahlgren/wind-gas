@@ -1,6 +1,6 @@
 # Windgas
 
-A small research project exploring whether wind conditions help explain pressure on gas-fired electricity generation. The initial market is DE-LU; see [the project brief](docs/european-energy-weather-monitor.md) for scope and caveats.
+A small research project exploring whether weather and power-system conditions help forecast Swedish day-ahead electricity prices. The initial area is SE3; see [the project brief](docs/european-energy-weather-monitor.md) for scope and caveats.
 
 ## Repository layout
 
@@ -29,13 +29,13 @@ Register on the [ENTSO-E Transparency Platform](https://transparency.entsoe.eu/)
 Dates use the bidding area's local timezone; `--end` is exclusive. Output CSV and metadata JSON files are written under `data/`.
 
 ```bash
-windgas load --start 2025-01-01 --end 2025-02-01
+windgas day_ahead_price --start 2025-01-01 --end 2025-02-01
 windgas generation --start 2025-01-01 --end 2025-02-01
 windgas wind_forecast --start 2025-01-01 --end 2025-02-01
 windgas solar_forecast --start 2025-01-01 --end 2025-02-01
 ```
 
-Supported datasets: `load`, `generation`, `wind_forecast`, `solar_forecast`. Generation is returned by production type. Forecast queries return matching wind or solar columns when the API response provides them. Missing intervals remain missing and are reported in metadata; they are never filled with zero.
+Supported datasets: `day_ahead_price`, `load`, `generation`, `wind_forecast`, `solar_forecast`. The default area is SE3; pass `--area SE_1`, `SE_2`, or `SE_4` to select another Swedish bidding area. Generation is returned by production type. Forecast queries return matching wind or solar columns when the API response provides them. Missing intervals remain missing and are reported in metadata; they are never filled with zero.
 
 ## Important limits
 

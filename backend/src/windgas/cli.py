@@ -10,11 +10,11 @@ from windgas.entsoe import EntsoeLoader, save_result
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Load ENTSO-E transparency data")
-    parser.add_argument("dataset", choices=["load", "generation", "wind_forecast", "solar_forecast"])
+    parser = argparse.ArgumentParser(description="Load ENTSO-E transparency data for a Swedish price area")
+    parser.add_argument("dataset", choices=["day_ahead_price", "load", "generation", "wind_forecast", "solar_forecast"])
     parser.add_argument("--start", type=date.fromisoformat, required=True, help="Start date, YYYY-MM-DD")
     parser.add_argument("--end", type=date.fromisoformat, required=True, help="Exclusive end date, YYYY-MM-DD")
-    parser.add_argument("--area", default="DE_LU", help="ENTSO-E bidding zone code (default: DE_LU)")
+    parser.add_argument("--area", default="SE3", help="Swedish bidding area (SE1-SE4; default: SE3)")
     parser.add_argument("--output", type=Path, default=Path("data"), help="Output directory (default: data)")
     return parser
 
